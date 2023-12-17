@@ -1,0 +1,53 @@
+func sum :
+ param V1
+L0 :
+ T0 = V1 > #0
+ if T0 != #0 goto L1
+ V2 = #0 + V1
+ V1 = V1 - #1
+ goto L0
+L1 :
+ return V2
+func fact :
+ param V3
+ T3 = V3 == #0
+ if T3 != #0 goto L2
+ return #1
+ goto L2
+L2 :
+ T4 = V3 - #1
+ arg T4
+ T5 := fact
+ T6 = V3 * T5
+ return T6
+func do_while :
+ param V4
+L4 :
+ T7 = V4 == #5
+ if T7 != #0 goto L6
+ goto L4
+L6 :
+ V5 = #0 + V4
+ V4 = V4 - #1
+ T10 = V4 > #0
+ if T10 != #0 goto L5
+ goto L4
+L5 :
+ return V5
+func main :
+L9 :
+ arg #20
+ T12 := sum
+ goto L8
+L10 :
+ goto L11
+ T14 := fact
+ goto L8
+L11 :
+ goto L8
+L8 :
+ arg #0
+ T16 := do_while
+ goto L8
+L13 :
+ return #0
