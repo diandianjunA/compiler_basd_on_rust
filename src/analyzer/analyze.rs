@@ -74,7 +74,7 @@ impl Analyzer {
                 return;
             }
         }
-        println!("第 {} 行: 没有main函数", self.last_line);
+        println!("第 {} 行：错误类型码：A1，语义错误：没有main函数", self.last_line);
         self.error = true;
     }
 
@@ -89,14 +89,14 @@ impl Analyzer {
                 Terminals::Identifier(i) => {
                     for symbol in current_table.borrow().symbols.iter() {
                         if symbol.borrow().name == i && symbol.borrow().level == self.current_level {
-                            println!("第 {} 行: 变量重复定义", var.borrow().child[0].borrow().line);
+                            println!("第 {} 行：错误类型码：A2，语义错误：变量重复定义", var.borrow().child[0].borrow().line);
                             self.error = true;
                         }
                     }
                     var_name = i.clone();
                 }
                 _ => {
-                    println!("第 {} 行: 变量名不合法", var.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A3，语义错误：变量名不合法", var.borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
@@ -109,7 +109,7 @@ impl Analyzer {
             } else if type_.borrow().child[0].borrow().terminal == Terminals::Char {
                 type_kind = ExpType::Char;
             } else {
-                println!("第 {} 行: 变量类型不合法", type_.borrow().child[0].borrow().line);
+                println!("第 {} 行：错误类型码：A4，语义错误：变量类型不合法", type_.borrow().child[0].borrow().line);
                 self.error = true;
             }
             match kind.clone() {
@@ -126,7 +126,7 @@ impl Analyzer {
                 ExpKind::ArrayK { size, dimensions } => {
                     for i in dimensions.iter() {
                         if *i <= 0 {
-                            println!("第 {} 行: 数组长度必须大于0", var.borrow().child[0].borrow().line);
+                            println!("第 {} 行：错误类型码：A5，语义错误：数组长度必须大于0", var.borrow().child[0].borrow().line);
                             self.error = true;
                         }
                     }
@@ -165,7 +165,7 @@ impl Analyzer {
                     }
                 }
                 _ => {
-                    println!("第 {} 行: 变量定义错误", var.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A6，语义错误：变量定义错误", var.borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
@@ -182,29 +182,29 @@ impl Analyzer {
                                     Terminals::String(s) => {
                                         if dimensions.len() == 1 {
                                             if s.len() > dimensions[0] {
-                                                println!("第 {} 行: 字符串长度超过数组长度", exp.borrow().child[0].borrow().line);
+                                                println!("第 {} 行：错误类型码：A7，语义错误：字符串长度超过数组长度", exp.borrow().child[0].borrow().line);
                                                 self.error = true;
                                             } else {
                                                 return;
                                             }
                                         } else {
-                                            println!("第 {} 行: 不能将字符串赋给一维以上的字符数组", exp.borrow().child[0].borrow().line);
+                                            println!("第 {} 行：错误类型码：A8，语义错误：不能将字符串赋给一维以上的字符数组", exp.borrow().child[0].borrow().line);
                                             self.error = true;
                                         }
                                     }
                                     _ => {
-                                        println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                                        println!("第 {} 行：错误类型码：A9，语义错误：表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                                         self.error = true;
                                     }
                                 }
                             }
                             _ => {
-                                println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                                println!("第 {} 行：错误类型码：A9，表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                                 self.error = true;
                             }
                         }
                     }
-                    println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                    println!("第 {} 行：错误类型码：A9，表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                     self.error = true;
                 }
             }
@@ -216,14 +216,14 @@ impl Analyzer {
                 Terminals::Identifier(i) => {
                     for symbol in current_table.borrow().symbols.iter() {
                         if symbol.borrow().name == i && symbol.borrow().level == self.current_level {
-                            println!("第 {} 行: 函数名重复定义", declaration.borrow().child[1].borrow().line);
+                            println!("第 {} 行：错误类型码：A10，语义错误：函数名重复定义", declaration.borrow().child[1].borrow().line);
                             self.error = true;
                         }
                     }
                     func_name = i.clone();
                 }
                 _ => {
-                    println!("第 {} 行: 函数名不合法", declaration.borrow().child[1].borrow().line);
+                    println!("第 {} 行：错误类型码：A11，语义错误：函数名不合法", declaration.borrow().child[1].borrow().line);
                     self.error = true;
                 }
             }
@@ -236,7 +236,7 @@ impl Analyzer {
             } else if type_.borrow().child[0].borrow().terminal == Terminals::Char {
                 type_kind = ExpType::Char;
             } else {
-                println!("第 {} 行: 变量类型不合法", type_.borrow().child[0].borrow().line);
+                println!("第 {} 行：错误类型码：A4，语义错误：变量类型不合法", type_.borrow().child[0].borrow().line);
                 self.error = true;
             }
             let symbol = Rc::new(RefCell::new(
@@ -261,7 +261,7 @@ impl Analyzer {
                         var_name = i.clone();
                     }
                     _ => {
-                        println!("第 {} 行: 变量名不合法", var.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A3，语义错误：变量名不合法", var.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 }
@@ -274,7 +274,7 @@ impl Analyzer {
                 } else if type_.borrow().child[0].borrow().terminal == Terminals::Char {
                     type_kind = ExpType::Char;
                 } else {
-                    println!("第 {} 行: 变量类型不合法", type_.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A4，语义错误：变量类型不合法", type_.borrow().child[0].borrow().line);
                     self.error = true;
                 }
                 match kind {
@@ -291,7 +291,7 @@ impl Analyzer {
                     ExpKind::ArrayK { size, dimensions } => {
                         for i in dimensions.iter() {
                             if *i <= 0 {
-                                println!("第 {} 行: 数组长度必须大于0", var.borrow().child[0].borrow().line);
+                                println!("第 {} 行：错误类型码：A5，语义错误：数组长度必须大于0", var.borrow().child[0].borrow().line);
                                 self.error = true;
                             }
                         }
@@ -330,7 +330,7 @@ impl Analyzer {
                         }
                     }
                     _ => {
-                        println!("第 {} 行: 变量定义错误", var.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A6，语义错误：变量定义错误", var.borrow().child[0].borrow().line);
                         self.error = true;
                         return;
                     }
@@ -339,12 +339,12 @@ impl Analyzer {
             if func_name == "main" {
                 self.symbol_table_manager.get_current().borrow_mut().is_main = true;
                 if params.len() != 0 {
-                    println!("第 {} 行: main函数不能有参数", declaration.borrow().child[1].borrow().line);
+                    println!("第 {} 行：错误类型码：A12，语义错误：main函数不能有参数", declaration.borrow().child[1].borrow().line);
                     self.error = true;
                 }
             }
             if params.len() > 8 {
-                println!("第 {} 行: 参数数目不能超过8个", declaration.borrow().child[1].borrow().line);
+                println!("第 {} 行：错误类型码：A13，语义错误：参数数目不能超过8个", declaration.borrow().child[1].borrow().line);
                 self.error = true;
             }
             for param in params.iter() {
@@ -384,14 +384,14 @@ impl Analyzer {
                     Terminals::Identifier(i) => {
                         for symbol in current_table.borrow().symbols.iter() {
                             if symbol.borrow().name == i && symbol.borrow().level == self.current_level {
-                                println!("第 {} 行: 变量重复定义", var.borrow().child[0].borrow().line);
+                                println!("第 {} 行：错误类型码：A2，语义错误：变量重复定义", var.borrow().child[0].borrow().line);
                                 self.error = true;
                             }
                         }
                         var_name = i.clone();
                     }
                     _ => {
-                        println!("第 {} 行: 变量名不合法", var.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A3，语义错误：变量名不合法", var.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 }
@@ -404,7 +404,7 @@ impl Analyzer {
                 } else if type_.borrow().child[0].borrow().terminal == Terminals::Char {
                     type_kind = ExpType::Char;
                 } else {
-                    println!("第 {} 行: 变量类型不合法", type_.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A4，语义错误：变量类型不合法", type_.borrow().child[0].borrow().line);
                     self.error = true;
                 }
                 match kind.clone() {
@@ -421,7 +421,7 @@ impl Analyzer {
                     ExpKind::ArrayK { size, dimensions } => {
                         for i in dimensions.iter() {
                             if *i <= 0 {
-                                println!("第 {} 行: 数组长度必须大于0", var.borrow().child[0].borrow().line);
+                                println!("第 {} 行：错误类型码：A5，语义错误：数组长度必须大于0", var.borrow().child[0].borrow().line);
                                 self.error = true;
                             }
                         }
@@ -460,7 +460,7 @@ impl Analyzer {
                         }
                     }
                     _ => {
-                        println!("第 {} 行: 变量定义错误", var.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A6，语义错误：变量定义错误", var.borrow().child[0].borrow().line);
                         self.error = true;
                         return;
                     }
@@ -478,29 +478,29 @@ impl Analyzer {
                                         Terminals::String(s) => {
                                             if dimensions.len() == 1 {
                                                 if s.len() > dimensions[0] {
-                                                    println!("第 {} 行: 字符串长度超过数组长度", exp.borrow().child[0].borrow().line);
+                                                    println!("第 {} 行：错误类型码：A7，语义错误：字符串长度超过数组长度", exp.borrow().child[0].borrow().line);
                                                     self.error = true;
                                                 } else {
                                                     return;
                                                 }
                                             } else {
-                                                println!("第 {} 行: 不能将字符串赋给一维以上的字符数组", exp.borrow().child[0].borrow().line);
+                                                println!("第 {} 行：错误类型码：A8，语义错误：不能将字符串赋给一维以上的字符数组", exp.borrow().child[0].borrow().line);
                                                 self.error = true;
                                             }
                                         }
                                         _ => {
-                                            println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                                            println!("第 {} 行：错误类型码：A9，语义错误：表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                                             self.error = true;
                                         }
                                     }
                                 }
                                 _ => {
-                                    println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                                    println!("第 {} 行：错误类型码：A9，语义错误：表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                                     self.error = true;
                                 }
                             }
                         }
-                        println!("第 {} 行: 表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
+                        println!("第 {} 行：错误类型码：A9，语义错误：表达式类型不匹配，变量类型为 {}，表达式类型为 {}", var.borrow().child[0].borrow().line, type_kind, exp_type);
                         self.error = true;
                     }
                 }
@@ -515,7 +515,7 @@ impl Analyzer {
                 let exp_type = self.analyze_exp(exp.clone());
                 if exp_type != ExpType::Boolean {
                     let line = get_exp_line(exp);
-                    println!("第 {} 行: 表达式类型不匹配，只有bool类型变量可以作为条件", line);
+                    println!("第 {} 行：错误类型码：A14，语义错误：表达式类型不匹配，只有bool类型变量可以作为条件", line);
                     self.error = true;
                 }
                 let compound_stmt = while_stmt.borrow().child[1].clone();
@@ -537,7 +537,7 @@ impl Analyzer {
                 let exp_type = self.analyze_exp(exp.clone());
                 if exp_type != ExpType::Boolean {
                     let line = get_exp_line(exp);
-                    println!("第 {} 行: 表达式类型不匹配，只有bool类型变量可以作为条件", line);
+                    println!("第 {} 行：错误类型码：A14，语义错误：表达式类型不匹配，只有bool类型变量可以作为条件", line);
                     self.error = true;
                 }
                 let expression_assign2 = for_expression.borrow().child[2].clone();
@@ -558,7 +558,7 @@ impl Analyzer {
                 let exp_type = self.analyze_exp(exp.clone());
                 if exp_type != ExpType::Boolean {
                     let line = get_exp_line(exp);
-                    println!("第 {} 行: 表达式类型不匹配，只有bool类型变量可以作为条件", line);
+                    println!("第 {} 行：错误类型码：A14，语义错误：表达式类型不匹配，只有bool类型变量可以作为条件", line);
                     self.error = true;
                 }
                 let compound_stmt = do_stmt.borrow().child[0].clone();
@@ -570,13 +570,13 @@ impl Analyzer {
             }
             NonTerminals::BreakStmt => {
                 if !self.current_table.borrow().is_loop {
-                    println!("第 {} 行: break语句只能在循环语句或者switch语句中使用", statement.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A15，语义错误：break语句只能在循环语句或者switch语句中使用", statement.borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
             NonTerminals::ContinueStmt => {
                 if !self.current_table.borrow().is_loop {
-                    println!("第 {} 行: continue语句只能在循环语句或者switch语句中使用", statement.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A16，语义错误：continue语句只能在循环语句中使用", statement.borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
@@ -591,7 +591,7 @@ impl Analyzer {
             }
             NonTerminals::ReturnStmt => {
                 if self.current_table.borrow().func_name == "global" {
-                    println!("第 {} 行: return语句只能在函数中使用", statement.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A17，语义错误：return语句只能在函数中使用", statement.borrow().child[0].borrow().line);
                     self.error = true;
                 }
                 let return_stmt = statement.borrow().child[0].clone();
@@ -606,7 +606,7 @@ impl Analyzer {
                 }
                 if let Some(symbol) = func_symbol {
                     if symbol.borrow().type_ != exp_type {
-                        println!("第 {} 行: 函数返回值类型不匹配，函数返回值类型为 {}，表达式类型为 {}", return_stmt.borrow().line, symbol.borrow().type_, exp_type);
+                        println!("第 {} 行：错误类型码：A18，语义错误：函数返回值类型不匹配，函数返回值类型为 {}，表达式类型为 {}", return_stmt.borrow().line, symbol.borrow().type_, exp_type);
                         self.error = true;
                     }
                 }
@@ -616,7 +616,7 @@ impl Analyzer {
                 self.analyze_var_or_call_stmt(var_or_call_stmt);
             }
             _ => {
-                println!("第 {} 行: 语句类型错误", statement.borrow().line);
+                println!("第 {} 行：错误类型码：A19，语义错误：语句类型错误", statement.borrow().line);
                 self.error = true;
             }
         }
@@ -626,7 +626,7 @@ impl Analyzer {
         let exp = if_stmt.borrow().child[0].clone();
         let exp_type = self.analyze_exp(exp);
         if exp_type != ExpType::Boolean {
-            println!("第 {} 行: 表达式类型不匹配，只有bool类型变量可以作为条件", if_stmt.borrow().line);
+            println!("第 {} 行：错误类型码：A14，语义错误：表达式类型不匹配，只有bool类型变量可以作为条件", if_stmt.borrow().line);
             self.error = true;
         }
         let compound_stmt = if_stmt.borrow().child[1].clone();
@@ -649,7 +649,7 @@ impl Analyzer {
                 let exp = case_stmt.borrow().child[0].clone();
                 let exp_type1 = self.analyze_exp(exp);
                 if exp_type1 != exp_type {
-                    println!("第 {} 行: 表达式类型不匹配，switch条件类型为 {}，case条件类型为 {}", case_stmt.borrow().line, exp_type, exp_type1);
+                    println!("第 {} 行：错误类型码：A20，语义错误：表达式类型不匹配，switch条件类型为 {}，case条件类型为 {}", case_stmt.borrow().line, exp_type, exp_type1);
                     self.error = true;
                 }
                 let statement_list = case_stmt.borrow().child[1].clone();
@@ -674,7 +674,7 @@ impl Analyzer {
                 let exp_type1 = self.analyze_additive_exp(child.clone());
                 if exp_type != ExpType::Void {
                     if exp_type1 != exp_type {
-                        println!("第 {} 行: 表达式类型不匹配", child.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A21，语义错误：表达式类型不匹配", child.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 } else {
@@ -682,7 +682,7 @@ impl Analyzer {
                 }
             } else {
                 if exp_type != ExpType::Boolean {
-                    println!("第 {} 行: 表达式类型 {} 不适配关系运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
+                    println!("第 {} 行：错误类型码：A22，语义错误：表达式类型 {} 不适配关系运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
                     self.error = true;
                 }
             }
@@ -700,7 +700,7 @@ impl Analyzer {
                 let exp_type1 = self.analyze_simple_exp(child.clone());
                 if exp_type != ExpType::Void {
                     if exp_type1 != exp_type {
-                        println!("第 {} 行: 表达式类型不匹配", child.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A21，语义错误：表达式类型不匹配", child.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 } else {
@@ -708,7 +708,7 @@ impl Analyzer {
                 }
             } else {
                 if exp_type == ExpType::Boolean || exp_type == ExpType::String || exp_type == ExpType::Char {
-                    println!("第 {} 行: 表达式类型 {} 不适配关系运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
+                    println!("第 {} 行：错误类型码：A22，语义错误：表达式类型 {} 不适配关系运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
                     self.error = true;
                 }
             }
@@ -726,7 +726,7 @@ impl Analyzer {
                 let exp_type1 = self.analyze_term(child.clone());
                 if exp_type != ExpType::Void {
                     if exp_type1 != exp_type {
-                        println!("第 {} 行: 表达式类型不匹配", child.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A21，语义错误：表达式类型不匹配", child.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 } else {
@@ -734,7 +734,7 @@ impl Analyzer {
                 }
             } else {
                 if exp_type == ExpType::Boolean || exp_type == ExpType::String || exp_type == ExpType::Char {
-                    println!("第 {} 行: 表达式类型 {} 不适配加减运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
+                    println!("第 {} 行：错误类型码：A22，语义错误：表达式类型 {} 不适配加减运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
                     self.error = true;
                 }
             }
@@ -749,7 +749,7 @@ impl Analyzer {
                 let exp_type1 = self.analyze_factor(child.clone());
                 if exp_type != ExpType::Void {
                     if exp_type1 != exp_type {
-                        println!("第 {} 行: 表达式类型不匹配", child.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A21，语义错误：表达式类型不匹配", child.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 } else {
@@ -757,7 +757,7 @@ impl Analyzer {
                 }
             } else {
                 if exp_type == ExpType::Boolean || exp_type == ExpType::String || exp_type == ExpType::Char {
-                    println!("第 {} 行: 表达式类型 {} 不适配乘除运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
+                    println!("第 {} 行：错误类型码：A22，语义错误：表达式类型 {} 不适配乘除运算符: {}", child.borrow().child[0].borrow().line, exp_type, child.borrow().child[0].borrow().terminal);
                     self.error = true;
                 }
             }
@@ -794,7 +794,7 @@ impl Analyzer {
                     return ExpType::String;
                 }
                 _ => {
-                    println!("第 {} 行: 表达式类型不匹配", factor.borrow().line);
+                    println!("第 {} 行：错误类型码：A21，语义错误：表达式类型不匹配", factor.borrow().line);
                     self.error = true;
                     return ExpType::Void;
                 }
@@ -809,12 +809,12 @@ impl Analyzer {
                 let exp = var_or_call_stmt.borrow().child[1].clone();
                 let exp_type1 = self.analyze_exp(exp);
                 if exp_type != exp_type1 {
-                    println!("第 {} 行: 表达式类型不匹配, 变量为 {}， 表达式为 {}", var_or_call_stmt.borrow().child[0].borrow().child[0].borrow().line, exp_type, exp_type1);
+                    println!("第 {} 行：错误类型码：A9，语义错误：表达式类型不匹配, 变量为 {}， 表达式为 {}", var_or_call_stmt.borrow().child[0].borrow().child[0].borrow().line, exp_type, exp_type1);
                     self.error = true;
                 }
             } else {
                 if exp_type != ExpType::Integer {
-                    println!("第 {} 行: 表达式类型不匹配，只有int类型可以使用自加自减运算", var_or_call_stmt.borrow().child[1].borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A23，语义错误：表达式类型不匹配，只有int类型可以使用自加自减运算", var_or_call_stmt.borrow().child[1].borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
@@ -839,7 +839,7 @@ impl Analyzer {
                 var_name = i.clone();
             }
             _ => {
-                println!("第 {} 行: 变量名不合法", var.borrow().child[0].borrow().line);
+                println!("第 {} 行：错误类型码：A3，语义错误：变量名不合法", var.borrow().child[0].borrow().line);
                 self.error = true;
             }
         }
@@ -870,17 +870,17 @@ impl Analyzer {
                     let option = symbol.borrow().dimension.clone();
                     match option {
                         None => {
-                            println!("第 {} 行: 变量类型错误，变量不是数组", var.borrow().child[0].borrow().line);
+                            println!("第 {} 行：错误类型码：A24，语义错误：变量类型错误，变量不是数组", var.borrow().child[0].borrow().line);
                             self.error = true;
                         }
                         Some(current_dimension) => {
                             if dimensions.len() != current_dimension.len() {
-                                println!("第 {} 行: 变量类型错误，数组维度不匹配", var.borrow().child[0].borrow().line);
+                                println!("第 {} 行：错误类型码：A25，语义错误：变量类型错误，数组维度不匹配", var.borrow().child[0].borrow().line);
                                 self.error = true;
                             }
                             for i in 0..dimensions.len() {
                                 if current_dimension[i] <= dimensions[i] {
-                                    println!("第 {} 行: 数组越界，数组长度只有 {}，而变量索引为 {}", var.borrow().child[0].borrow().line, current_dimension[i], dimensions[i]);
+                                    println!("第 {} 行：错误类型码：A26，语义错误：数组越界，数组长度只有 {}，而变量索引为 {}", var.borrow().child[0].borrow().line, current_dimension[i], dimensions[i]);
                                     self.error = true;
                                 }
                             }
@@ -889,12 +889,12 @@ impl Analyzer {
                     }
                 }
                 _ => {
-                    println!("第 {} 行: 变量类型错误，未知的类型", var.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A27，语义错误：变量类型错误，未知的类型", var.borrow().child[0].borrow().line);
                     self.error = true;
                 }
             }
         }
-        println!("第 {} 行: 变量未定义", var.borrow().child[0].borrow().line);
+        println!("第 {} 行：错误类型码：A28，语义错误：变量未定义", var.borrow().child[0].borrow().line);
         self.error = true;
         return ExpType::Void;
     }
@@ -907,7 +907,7 @@ impl Analyzer {
                 call_name = i.clone();
             }
             _ => {
-                println!("第 {} 行: 函数名不合法", call.borrow().child[0].borrow().line);
+                println!("第 {} 行：错误类型码：A11，语义错误：函数名不合法", call.borrow().child[0].borrow().line);
                 self.error = true;
             }
         }
@@ -921,21 +921,21 @@ impl Analyzer {
                     args_type.push(arg_type);
                 }
                 if args_type.len() != symbol.borrow().param_num as usize {
-                    println!("第 {} 行: 参数个数不匹配", call.borrow().child[0].borrow().line);
+                    println!("第 {} 行：错误类型码：A29，语义错误：参数个数不匹配", call.borrow().child[0].borrow().line);
                     self.error = true;
                 }
                 let table = self.symbol_table_manager.get(call_name).unwrap();
                 let params = table.borrow().get_params();
                 for i in 0..args_type.len() {
                     if args_type[i] != params[i].borrow().type_ {
-                        println!("第 {} 行: 参数类型不匹配", call.borrow().child[0].borrow().line);
+                        println!("第 {} 行：错误类型码：A30，语义错误：参数类型不匹配", call.borrow().child[0].borrow().line);
                         self.error = true;
                     }
                 }
                 return symbol.borrow().type_.clone();
             }
         }
-        println!("第 {} 行: 函数未定义", call.borrow().child[0].borrow().line);
+        println!("第 {} 行：错误类型码：A31，语义错误：函数未定义", call.borrow().child[0].borrow().line);
         self.error = true;
         return ExpType::Void;
     }

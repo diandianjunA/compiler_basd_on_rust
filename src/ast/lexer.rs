@@ -429,6 +429,13 @@ impl Lexer {
                 return Terminals::FloatNumber(number.parse::<f64>().unwrap());
             }
         }
+        if let Some(c) = self.current_char() {
+            if !Self::is_identifier_start(&c) {
+                return Terminals::Integer(number.parse::<i64>().unwrap());
+            } else {
+                panic!("第 {} 行：错误类型码：C1，词法错误：数字token不支持的字符: {}",self.line ,c);
+            }
+        }
         Terminals::Integer(number.parse::<i64>().unwrap())
     }
 
@@ -548,7 +555,7 @@ impl Lexer {
                     self.consume();
                     Terminals::And
                 } else {
-                    panic!("词法错误： 不支持的字符: {}", c)
+                    panic!("第 {} 行：错误类型码：C2，词法错误：不支持的字符: {}",self.line , c)
                 }
             }
             '|' => {
@@ -556,14 +563,14 @@ impl Lexer {
                     self.consume();
                     Terminals::Or
                 } else {
-                    panic!("词法错误： 不支持的字符: {}", c);
+                    panic!("第 {} 行：错误类型码：C2，词法错误：不支持的字符: {}",self.line , c);
                 }
             }
             '[' => Terminals::LeftBracket,
             ']' => Terminals::RightBracket,
             ':' => Terminals::Colon,
             _ => {
-                panic!("词法错误： 不支持的字符: {}", c)
+                panic!("第 {} 行：错误类型码：C2，词法错误：不支持的字符: {}",self.line , c)
             },
         }
     }

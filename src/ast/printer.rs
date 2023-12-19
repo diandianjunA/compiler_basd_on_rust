@@ -6,7 +6,7 @@ use crate::ast::lexer::{Lexer, Terminals, Token};
 use crate::ast::parser::Parser;
 use crate::ast::{ExpKind, ExpType, NonTerminals, TreeNode};
 use crate::ast::StmtKind::VarDecK;
-use crate::code_gen::CodeGen;
+use crate::code_gen::{CodeGen, StatementKind};
 use crate::code_gen::target_code_gen::Masm;
 
 pub struct LexerPrinter {
@@ -674,14 +674,14 @@ pub struct ThreeAddressCodePrinter {
 
 impl ThreeAddressCodePrinter {
     pub fn new(analyzer: Rc<RefCell<Analyzer>>) -> Self {
-        let code_generator = CodeGen::new(analyzer);
+        let mut code_generator = CodeGen::new(analyzer);
+        code_generator.gen_code();
         Self {
             code_generator,
         }
     }
 
     pub fn print(&mut self) {
-        self.code_generator.gen_code();
         let codes = &self.code_generator.codes;
         for code in codes.iter() {
             println!("{}", code.raw);
@@ -694,14 +694,14 @@ pub struct MasmPrinter {
 }
 
 impl MasmPrinter {
-    pub fn new(masm: Masm) -> Self {
+    pub fn new(mut masm: Masm) -> Self {
+        masm.initialize();
         Self {
             masm,
         }
     }
 
     pub fn print(&mut self) {
-        self.masm.initialize();
         let codes = &self.masm.codes;
         for code in codes.iter() {
             println!("{}", code);

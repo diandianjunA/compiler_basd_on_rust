@@ -34,6 +34,8 @@ pub enum StatementKind {
     Return,
     Arg,
     Label,
+    LoopStart,
+    LoopEnd,
 }
 
 #[derive(Debug, Clone)]
@@ -196,6 +198,20 @@ impl CodeGen {
         let mut code = Code::new(raw);
         code.kind = StatementKind::Func;
         code.func = func_name.to_string();
+        code
+    }
+
+    pub fn loop_start(&mut self) -> Code {
+        let raw = format!("loop_start");
+        let mut code = Code::new(raw);
+        code.kind = StatementKind::LoopStart;
+        code
+    }
+    
+    pub fn loop_end(&mut self) -> Code {
+        let raw = format!("loop_end");
+        let mut code = Code::new(raw);
+        code.kind = StatementKind::LoopEnd;
         code
     }
 
@@ -466,6 +482,8 @@ impl CodeGen {
                 self.add_code(code);
             }
             NonTerminals::WhileStmt => {
+                let start = self.loop_start();
+                self.add_code(start);
                 let while_stmt = statement.borrow().child[0].clone();
                 let label0 = self.new_label();
                 let code = self.gen_code_from_label(&label0);
@@ -487,10 +505,14 @@ impl CodeGen {
                 self.level -= 1;
                 let code = self.gen_goto(&label0);
                 self.add_code(code);
+                let end = self.loop_end();
+                self.add_code(end);
                 let code = self.gen_code_from_label(&label1);
                 self.add_code(code);
             }
             NonTerminals::ForStmt => {
+                let start = self.loop_start();
+                self.add_code(start);
                 let for_stmt = statement.borrow().child[0].clone();
                 let for_expression = for_stmt.borrow().child[0].clone();
                 let compound_stmt = for_stmt.borrow().child[1].clone();
@@ -521,10 +543,14 @@ impl CodeGen {
                 }
                 let code = self.gen_goto(&label0);
                 self.add_code(code);
+                let end = self.loop_end();
+                self.add_code(end);
                 let code = self.gen_code_from_label(&label1);
                 self.add_code(code);
             }
             NonTerminals::DoStmt => {
+                let start = self.loop_start();
+                self.add_code(start);
                 let do_stmt = statement.borrow().child[0].clone();
                 let label0 = self.new_label();
                 let label1 = self.new_label();
@@ -546,6 +572,8 @@ impl CodeGen {
                 self.add_code(code);
                 let code = self.gen_goto(&label0);
                 self.add_code(code);
+                let end = self.loop_end();
+                self.add_code(end);
                 let code = self.gen_code_from_label(&label1);
                 self.add_code(code);
             }

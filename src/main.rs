@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::Read;
 use compiler::ast::printer::LexerPrinter;
 use compiler::analyzer::analyze::Analyzer;
+use compiler::Compiler;
 
 fn main() {
     if env::args().len() < 2 {
@@ -22,9 +23,29 @@ fn main() {
         Ok(_) => (),
         Err(e) => panic!("文件读取失败: {}", e)
     };
+    let mut compiler = Compiler::new(content);
     if args.contains(&"-l".to_string()){
-        let lexer_printer = LexerPrinter::new(content);
-        lexer_printer.print();
+        compiler.lexer();
+    }
+    if args.contains(&"-p".to_string()){
+        compiler.parser();
+    }
+    if args.contains(&"-s".to_string()){
+        compiler.symbol_table();
+    }
+    if args.contains(&"-t".to_string()){
+        if args.contains(&"-o".to_string()){
+            compiler.optimize_tac_code();
+        } else {
+            compiler.three_address_code();
+        }
+    }
+    if args.contains(&"-m".to_string()){
+        if args.contains(&"-o".to_string()){
+            compiler.optimize_masm_code();
+        } else {
+            compiler.masm();
+        }
     }
 }
 
@@ -46,8 +67,8 @@ mod tests{
     }
 
     #[test]
-    fn test_lexer2(){
-        let file_path = "./semantic_error.c";
+    fn test_lexer_error(){
+        let file_path = "./lexer_error.c";
         let mut file = match File::open(file_path) {
             Ok(f) => f,
             Err(e) => panic!("文件打开失败: {}", e)
@@ -85,7 +106,20 @@ mod tests{
     }
 
     #[test]
-    fn test_error1(){
+    fn test_parser_error(){
+        let file_path = "./parser_error.c";
+        let mut file = match File::open(file_path) {
+            Ok(f) => f,
+            Err(e) => panic!("文件打开失败: {}", e)
+        };
+        let mut content = String::new();
+        file.read_to_string(&mut content).unwrap();
+        let mut parser_printer = ParserPrinter::new(content);
+        parser_printer.print();
+    }
+
+    #[test]
+    fn test_semantic_error1(){
         let file_path = "./semantic_error.c";
         let mut file = match File::open(file_path) {
             Ok(f) => f,
@@ -148,8 +182,7 @@ mod tests{
         let analyzer = Rc::new(RefCell::new(analyzer));
         let mut code_generator = CodeGen::new(analyzer.clone());
         code_generator.gen_code();
-        let mut masm = Masm::new(analyzer, code_generator.codes.clone());
-        masm.initialize();
+        let masm = Masm::new(analyzer, code_generator.codes.clone());
         let mut masm_printer = MasmPrinter::new(masm);
         masm_printer.print();
     }
@@ -207,5 +240,18 @@ mod tests{
         let masm = Masm::new(analyzer, optimizer.codes);
         let mut masm_printer = MasmPrinter::new(masm);
         masm_printer.print();
+    }
+
+    #[test]
+    fn test_compiler(){
+        let file_path = "./right.c";
+        let mut file = match File::open(file_path) {
+            Ok(f) => f,
+            Err(e) => panic!("文件打开失败: {}", e)
+        };
+        let mut content = String::new();
+        file.read_to_string(&mut content).unwrap();
+        let mut compiler = Compiler::new(content);
+        compiler.optimize_masm_code();
     }
 }

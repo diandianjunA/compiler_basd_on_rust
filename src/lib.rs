@@ -25,6 +25,7 @@ impl Compiler {
         let lexer_printer = LexerPrinter::new(content.clone());
         let parser_printer = ParserPrinter::new(content.clone());
         let analyzer = Rc::new(RefCell::new(Analyzer::new(parser_printer.parser.stack.tree_root.clone(), lexer_printer.tokens.last().unwrap().line)));
+        analyzer.borrow_mut().analyze();
         let symbol_table_printer = SymbolTablePrinter::new(analyzer.clone());
         let three_address_code_printer = ThreeAddressCodePrinter::new(analyzer.clone());
         let optimizer = Optimizer::new(three_address_code_printer.code_generator.codes.clone());
@@ -40,35 +41,36 @@ impl Compiler {
             optimizer
         }
     }
-    
+
     pub fn lexer(&mut self) {
         self.lexer_printer.print();
     }
-    
+
     pub fn parser(&mut self) {
         self.parser_printer.print();
     }
-    
+
     pub fn symbol_table(&mut self) {
         self.symbol_table_printer.print();
     }
-    
+
     pub fn three_address_code(&mut self) {
         self.three_address_code_printer.print();
     }
-    
+
     pub fn masm(&mut self) {
         self.masm_printer.print();
     }
-    
+
     pub fn optimize_tac_code(&mut self) {
         self.optimizer.optimize();
         self.optimizer.print();
     }
-    
+
     pub fn optimize_masm_code(&mut self) {
         self.optimizer.optimize();
-        let masm = Masm::new(self.analyzer.clone(), self.optimizer.codes.clone());
+        let mut masm = Masm::new(self.analyzer.clone(), self.optimizer.codes.clone());
+        masm.initialize();
         self.masm_printer.masm = masm;
         self.masm_printer.print();
     }

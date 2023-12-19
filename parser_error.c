@@ -6,14 +6,13 @@ float global = 1.5;
 int sum(int a) {
     int r = 0;
     while (a > 0 && r > 0) {
-        r = 5;
+        r = 5
         a = a - 1;
     }
     return r;
 }
 
 int fact(int a) {
-    a = 0;
     if (a == 0) {
         return 1;
     }
@@ -44,8 +43,8 @@ int main(void) {
 	int j = 15;
 	int k = 0;
 	if (k != 0) {
-        k = 1;
-    }
+	    k = 1;
+	}
 	switch (choice[0][1]) {
         case 1:
             sum(choice[1][1]);

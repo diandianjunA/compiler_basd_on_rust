@@ -37,7 +37,7 @@ impl Parser {
                         }
                     }
                 } else {
-                    panic!("语法错误： {} 不能匹配 {}，第 {} 行", element.borrow().terminal.to_string(), token.kind.to_string(), token.line);
+                    panic!("第 {} 行：错误类型码G1，语法错误：{} 不能匹配 {}，", element.borrow().terminal.to_string(), token.kind.to_string(), token.line);
                 }
                 match tokens.pop() {
                     None => {
@@ -341,7 +341,7 @@ impl Parser {
                         self.stack.production97(element);
                     },
                     _ => {
-                        panic!("Error: {} can not generate {} first", element.borrow().non_terminal.to_string(), token.kind.to_string());
+                        panic!("第 {} 行：错误类型码G2，语法错误：{} 不能生成以 {} 开头的句子", token.line ,element.borrow().non_terminal.to_string(), token.kind.to_string());
                     }
                 }
             }

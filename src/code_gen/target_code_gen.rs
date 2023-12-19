@@ -64,7 +64,7 @@ impl Masm {
             is_main: false,
         };
         let mut global = Vec::new();
-        let mut iter = self.tac_codes.iter().enumerate();
+        let mut iter = self.tac_codes.iter().enumerate().peekable();
         while let Some((i, code)) = iter.next() {
             if code.kind == Func {
                 let mut procedure = Procedure {
@@ -72,12 +72,12 @@ impl Masm {
                     codes: vec![],
                     is_main: false,
                 };
-                while let Some((j, inner_code)) = iter.next() {
-                    if inner_code.kind == Return {
-                        procedure.codes.push(inner_code.clone());
+                while let Some((j, inner_code)) = iter.peek() {
+                    if inner_code.kind == Func && *j != i {
                         break;
                     }
-                    procedure.codes.push(inner_code.clone());
+                    procedure.codes.push((*inner_code).clone());
+                    iter.next();
                 }
                 if code.func == "main" {
                     procedure.is_main = true;
@@ -415,6 +415,7 @@ impl Masm {
             StatementKind::Call => {
                 self.codes.push(format!("  CALL FAR PTR {}", code.func));
             }
+            _ => {}
         }
     }
 }
