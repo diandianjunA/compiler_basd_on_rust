@@ -1,10 +1,13 @@
 本实验自定义的语言为C语言的子集
-数据类型支持char类型、int类型和float类型，同时支持字符串给char型一维数组赋值。
-基本运算支持算术运算、比较运算、自增自减运算、复合赋值运算和逻辑运算。
-控制语句支持if语句、while语句、do while语句、break、continue语句、for语句、switch语句。
-支持多维数组、函数调用、单行注释和多行注释
+
+- 数据类型支持char类型、int类型和float类型，同时支持字符串给char型一维数组赋值。
+- 基本运算支持算术运算、比较运算、自增自减运算、复合赋值运算和逻辑运算。
+- 控制语句支持if语句、while语句、do while语句、break、continue语句、for语句、switch语句。
+- 支持多维数组、函数调用、单行注释和多行注释
 
 语言文法：
+
+```
 program:declaration_list
 declaration_list:declaration declaration_list'
 declaration_list':declaration declaration_list'|None
@@ -65,3 +68,4 @@ self_op:PlusPlus|MinusMinus
 var_or_call_stmt:Identifier var_or_call_stmt_remain
 var_or_call_stmt_remain:LeftParen args RightParen|var' var_stmt
 var_stmt:self_op|Equals expression
+```
